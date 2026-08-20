@@ -5,29 +5,22 @@ import { prisma } from "@/lib/prisma";
 import { generateVerificationCode } from "@/lib/tiktok-verify";
 import { resolveRoomForStreamer } from "@/lib/tiktok-room";
 
-// GET: return existing pending code for current user
+// GET: return the TikTok ID currently registered for the signed-in user
 export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const streamer = await prisma.streamer.findUnique({
     where: { userId: session.user.id },
-    select: { tiktokId: true, verificationCode: true, verified: true },
+    select: { tiktokId: true },
   });
 
   if (!streamer) return NextResponse.json({});
 
-  if (streamer.verified) {
-    return NextResponse.json({ verified: true, tiktokId: streamer.tiktokId });
-  }
-
-  return NextResponse.json({
-    tiktokId: streamer.tiktokId,
-    code: streamer.verificationCode,
-  });
+  return NextResponse.json({ tiktokId: streamer.tiktokId });
 }
 
-// POST: create or update verification code for the given TikTok ID
+// POST: register or replace the TikTok ID for the signed-in user
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -42,16 +35,16 @@ export async function POST(req: NextRequest) {
   }
 
   // 登録は無条件で許可する(他アカウントとの重複登録も可)。
-  // 実データ(コイン数・ギフト履歴)へのアクセスはBIO認証完了まで別途ブロックされる。
-  const code = generateVerificationCode();
-
+  // BIO認証は廃止したため、登録時点でverified扱いにする(モバイル版と同じ挙動)。
   const streamer = await prisma.streamer.upsert({
     where: { userId: session.user.id },
-    update: { tiktokId: clean, verificationCode: code, verified: false, verifiedAt: null },
+    update: { tiktokId: clean, verified: true, verifiedAt: new Date() },
     create: {
       userId: session.user.id,
       tiktokId: clean,
-      verificationCode: code,
+      verificationCode: generateVerificationCode(),
+      verified: true,
+      verifiedAt: new Date(),
     },
   });
 
@@ -59,5 +52,5 @@ export async function POST(req: NextRequest) {
   // オーバーレイ/ギフトデータ共有を反映するため)。
   await resolveRoomForStreamer(streamer.id);
 
-  return NextResponse.json({ tiktokId: clean, code });
+  return NextResponse.json({ tiktokId: clean });
 }

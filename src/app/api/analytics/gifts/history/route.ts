@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
 
   const streamer = await prisma.streamer.findUnique({
     where: { userId: session.user.id },
-    select: { id: true, roomId: true, verified: true },
+    select: { id: true, roomId: true },
   });
 
   if (!streamer || !streamer.roomId) {
@@ -19,7 +19,6 @@ export async function GET(req: NextRequest) {
       events: [],
       dateRange: { start: "", end: "" },
       total: { count: 0, diamonds: 0 },
-      verified: false,
     });
   }
 
@@ -75,5 +74,5 @@ export async function GET(req: NextRequest) {
     { count: 0, diamonds: 0 }
   );
 
-  return NextResponse.json({ events, dateRange, total, verified: streamer.verified });
+  return NextResponse.json({ events, dateRange, total });
 }

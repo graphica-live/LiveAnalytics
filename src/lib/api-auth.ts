@@ -14,10 +14,10 @@ export async function resolveStreamerByApiKey(req: NextRequest): Promise<{ id: s
 
   const streamer = await prisma.streamer.findUnique({
     where: { apiKey },
-    select: { id: true, verified: true, roomId: true },
+    select: { id: true, roomId: true },
   });
 
-  if (!streamer?.verified) return null;
+  if (!streamer) return null;
 
   return { id: streamer.id, roomId: streamer.roomId };
 }

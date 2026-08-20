@@ -10,4 +10,4 @@ RUN npx prisma generate && npx next build
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "echo \"[startup] PORT=$PORT\" && npx tsx scripts/migrate-shared-tiktok-room.ts && npx prisma db push --accept-data-loss && node server.js"]
+CMD ["sh", "-c", "echo \"[startup] PORT=$PORT\" && npx tsx scripts/migrate-shared-tiktok-room.ts && npx prisma db push --accept-data-loss && npx tsx scripts/backfill-verified.ts && node server.js"]

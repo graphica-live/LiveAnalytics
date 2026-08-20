@@ -10,18 +10,17 @@ export async function GET(req: NextRequest) {
 
   const streamer = await prisma.streamer.findUnique({
     where: { userId: session.user.id },
-    select: { id: true, roomId: true, verified: true },
+    select: { id: true, roomId: true },
   });
 
   if (!streamer || !streamer.roomId) {
-    return NextResponse.json({ users: [], total: { giftCount: 0, totalDiamonds: 0 }, verified: false });
+    return NextResponse.json({ users: [], total: { giftCount: 0, totalDiamonds: 0 } });
   }
 
   const { searchParams } = new URL(req.url);
   const startDatetime = searchParams.get("startDatetime");
   const endDatetime = searchParams.get("endDatetime");
 
-  // コイン数の実データはverified未完了でも取得する。表示のブロック(すりガラス化)はフロント側の責務。
   if (startDatetime && endDatetime) {
     const startDate = new Date(startDatetime);
     const endDate = new Date(endDatetime);
@@ -32,7 +31,6 @@ export async function GET(req: NextRequest) {
       users,
       dateRange: { start: startDatetime, end: endDatetime },
       total,
-      verified: streamer.verified,
     });
   }
 
@@ -41,7 +39,7 @@ export async function GET(req: NextRequest) {
   const { start, end } = getDateRange(period, date);
 
   const { users, total } = await queryGifts(streamer.roomId, streamer.id, { dayKey: { gte: start, lte: end } });
-  return NextResponse.json({ users, dateRange: { start, end }, total, verified: streamer.verified });
+  return NextResponse.json({ users, dateRange: { start, end }, total });
 }
 
 export async function DELETE(req: NextRequest) {

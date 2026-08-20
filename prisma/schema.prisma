@@ -82,7 +82,7 @@ model Streamer {
   userId           String    @unique
   tiktokId         String    // 表示用。ユーザー入力値そのまま(正規化はTiktokRoom側でのみ行う)
   verificationCode String
-  verified         Boolean   @default(false)
+  verified         Boolean   @default(true) // BIO認証は廃止。TikTok ID登録時点で認証済み扱い
   verifiedAt       DateTime?
   apiKey           String?   @unique
   createdAt        DateTime  @default(now())

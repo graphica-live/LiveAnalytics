@@ -91,7 +91,7 @@ components:
 暗いニュートラルの上に、単一のTikTokレッドだけがアクセントとして乗る一色構成。
 
 ### Primary
-- **TikTok Red** (`#fe2c55`): プライマリボタン、アクティブなタブ/セグメント、フォーカスされた入力欄のボーダー、外部リンクのホバー、認証コード等の強調テキストに使用。画面全体に対しては局所的にしか出現しない。
+- **TikTok Red** (`#fe2c55`): プライマリボタン、アクティブなタブ/セグメント、フォーカスされた入力欄のボーダー、外部リンクのホバー、TikTok ID等の強調テキストに使用。画面全体に対しては局所的にしか出現しない。
 - **TikTok Red Hover** (`#e91e50`): プライマリボタンのホバー状態。
 
 ### Neutral
@@ -114,7 +114,7 @@ components:
 ## Typography
 
 **Font:** システムのUIサンセリフスタック(`next/font`によるWebフォント読み込みはなし。ブラウザ既定のsans-serifをそのまま採用)。
-**Numeric/Mono Font:** `font-mono`(等幅) — コイン数、順位、認証コード、APIキー、Overlay URLなど「揃えて読ませたい/コピーさせたい」値専用。
+**Numeric/Mono Font:** `font-mono`(等幅) — コイン数、順位、TikTok ID、APIキー、Overlay URLなど「揃えて読ませたい/コピーさせたい」値専用。
 
 **Character:** 装飾のない実用一辺倒のペアリング。個性は書体ではなく、数値だけを等幅にする使い分けと、絵文字アイコン(💎🎁🎯⚙️)が担う。
 
@@ -127,7 +127,7 @@ components:
 - **Numeric** (`font-mono`, サイズはコンテキスト依存): コイン数・順位・コード類。桁揃えと視認性を優先。
 
 ### Named Rules
-**The Mono Numbers Rule.** ユーザーが比較・コピーする数値(コイン数、順位、認証コード、APIキー)は必ず`font-mono`にする。それ以外のテキストにはmonoを使わない。
+**The Mono Numbers Rule.** ユーザーが比較・コピーする値(コイン数、順位、TikTok ID、APIキー)は必ず`font-mono`にする。それ以外のテキストにはmonoを使わない。
 
 ## Layout
 
@@ -140,11 +140,10 @@ components:
 
 ## Elevation & Depth
 
-現状はほぼフラット: カード・ボタン・入力欄はボーダー(`border-border`)のみで区切られ、`box-shadow`を持たない。唯一の例外は、コンテンツの上に浮くポップオーバー/ドロップダウン(オーバーレイ設定パネル、カスタム期間カレンダー、BIO認証ゲートのオーバーレイ)で、これらだけが`shadow-xl`(必要に応じて`backdrop-blur-sm`)を持つ。これは現状観測された実装上の使い分けであり、今後変更を縛る公式ルールとしては固定しない。
+現状はほぼフラット: カード・ボタン・入力欄はボーダー(`border-border`)のみで区切られ、`box-shadow`を持たない。唯一の例外は、コンテンツの上に浮くポップオーバー/ドロップダウン(オーバーレイ設定パネル、カスタム期間カレンダー)で、これらだけが`shadow-xl`(必要に応じて`backdrop-blur-sm`)を持つ。これは現状観測された実装上の使い分けであり、今後変更を縛る公式ルールとしては固定しない。
 
 ### Shadow Vocabulary (observed)
 - **Floating panel** (`shadow-xl`): ドロップダウン、ポップオーバー、モーダル的に前面に出るブロックのみ。
-- **Blur overlay** (`backdrop-blur-sm` + `bg-panel/90`): 認証待ちのすりガラス演出(`VerifyGate`)。
 
 ## Shapes
 
@@ -159,7 +158,7 @@ components:
 
 ### Buttons
 - **Shape:** `rounded-lg`(8px)。
-- **Primary (`.btn-primary`):** 背景 TikTok Red、文字白・`font-semibold`、`px-4 py-2`、`disabled:opacity-50`。1画面に主要な決定アクションとして1〜2箇所のみ出現(認証コード発行、確認する、CSV適用など)。
+- **Primary (`.btn-primary`):** 背景 TikTok Red、文字白・`font-semibold`、`px-4 py-2`、`disabled:opacity-50`。1画面に主要な決定アクションとして1〜2箇所のみ出現(TikTok ID設定、APIキー発行、CSV適用など)。
 - **Ghost (`.btn-ghost`):** 背景透明、文字`gray-400`、ホバーで文字白+背景`white/5`。ヘッダーのアクション群、テーブル内のアイコンボタンなど「補助的操作」全般に使う既定ボタン。
 - **Hover / Focus:** すべて`transition-colors`でフェード。フォーカスリングは明示定義されておらず、入力欄のみ`focus:border-brand/60`でボーダー色を変える形にとどまる。
 
